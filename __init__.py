@@ -15,7 +15,7 @@ with open("config.json", encoding='utf-8') as f:
 PATH_PROJECT = os.getcwd()
 PATH_FOR_FACES = const_data['path_for_face']
 MIN_FACE_PERCENT = const_data['min_face_percent']
-PATH_TRAINING_VIDEO = const_data['path_url_traning_video']
+PATH_TRAINING_VIDEO = const_data['path_url_training_video']
 SAVING_FRAMES_PER_SECOND = const_data['fps_received']
 
 def analysis_image(img_array):
