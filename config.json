@@ -1,6 +1,6 @@
 {
   "fps_received" : 10,
   "path_for_faces" : "D:\\Project\\Python\\AI\\лица",
-  "path_url_traning_video" : "D:\\Project\\Python\\AI\\traning_video.mp4",
+  "path_url_training_video" : "D:\\Project\\Python\\AI\\traning_video.mp4",
   "min_face_percent" : 70
 }
