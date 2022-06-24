@@ -1,0 +1,6 @@
+{
+  "fps_received" : 10,
+  "path_for_faces" : "C:\\Users\\nikiy\\Desktop\\Hackaton\\BrainBitsAI\\лица",
+  "path_url_training_video" : "training_video.mp4",
+  "min_face_percent" : 70
+}
