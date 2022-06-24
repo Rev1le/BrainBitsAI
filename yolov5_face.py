@@ -34,8 +34,23 @@ class AI_Yolov5():
         list_face_coords: list = bboxes[0]
         print(list_face_coords)
 
-        self.save_faces(list_face_coords, image)
+        #self.save_faces(list_face_coords, image)
+        #
+        # Получаем массив картинок формата Image для каждого полученного фрейма
+        #
+        list_face = self.create_list_image(list_face_coords, image)
+        for face in list_face:
+            face.show()
         return True
+
+
+    def create_list_image(self, list_nparray, target_img):
+        list_image = []
+        for face_coords in list_nparray:
+            face_standart_coords = self.format_coords(face_coords)
+            face_img = target_img.crop((face_standart_coords)).resize((512, 512))
+            list_image.append(face_img)
+        return list_image
 
     def save_faces(self, list_face_coords, image):
         for face_coords in list_face_coords:
@@ -93,3 +108,4 @@ class AI_Yolov5():
         coords[1] += increase
 
         return coords
+
