@@ -37,6 +37,8 @@ class AI_Yolov5():
     #     self.save_faces(list_face_coords, image)
     #     return True
 
+
+
     def analysis_image(self, img_array):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
         #cv2.imwrite(path_frame_tmp, img_array)
