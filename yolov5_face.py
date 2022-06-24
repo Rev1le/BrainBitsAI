@@ -24,21 +24,6 @@ class AI_Yolov5():
         self.model = YoloDetector(gpu=0, min_face=self.MIN_FACE_PERCENT)
         self.fasec_image_list = []
 
-    # def analysis_image(self, img_array):
-    #     path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
-    #     cv2.imwrite(path_frame_tmp, img_array)
-    #     image = Image.open(path_frame_tmp)
-    #
-    #     bboxes, confs, points = self.model.predict(img_array)
-    #
-    #     list_face_coords: list = bboxes[0]
-    #     print(list_face_coords)
-    #
-    #     self.save_faces(list_face_coords, image)
-    #     return True
-
-
-
     def analysis_image(self, img_array):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
         #cv2.imwrite(path_frame_tmp, img_array)

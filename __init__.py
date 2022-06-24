@@ -10,6 +10,7 @@ class App:
         yolov5_model = yolov5_face.AI_Yolov5()
         yolov5_model.find_faces_from_video()
 
+
 if __name__ == '__main__':
     app = App('training_video.mp4')
     app.start_ai()
