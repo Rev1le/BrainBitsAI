@@ -35,9 +35,9 @@ class AI_Yolov5():
         print(list_face_coords)
 
         #self.save_faces(list_face_coords, image)
-        #
+        ###
         # Получаем массив картинок формата Image для каждого полученного фрейма
-        #
+        ###
         list_face = self.create_list_image(list_face_coords, image)
         for face in list_face:
             face.show()

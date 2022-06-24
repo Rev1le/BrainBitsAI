@@ -14,4 +14,3 @@ class App:
 if __name__ == '__main__':
     app = App('training_video.mp4')
     app.start_ai()
-    #os.mkdir('лица')

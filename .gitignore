@@ -1,5 +1,4 @@
-# created by virtualenv automatically
 *.idea
-.
 VirtualPython310
+лица
 /training_video.mp4
