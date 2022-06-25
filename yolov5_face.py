@@ -36,7 +36,7 @@ class AI_Yolov5():
     def get_emotions_list(self):
         return self.emotions_list
 
-    def analysis_image(self, img_array):
+    def analysis_image(self, img_array, frame_time):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
         #cv2.imwrite(path_frame_tmp, img_array)
         img_nparray_rgb = cv2.cvtColor(img_array.astype(np.uint8), cv2.COLOR_BGR2RGB)
@@ -52,23 +52,25 @@ class AI_Yolov5():
         ###
         list_face = self.create_list_image(list_face_coords, image)
 
+        if len(list_face) > 0:
+            self.detector.detect_emotion(list_face,self.add_emotion_to_list, True)
 
         threads_list =[]
-        if len(list_face) <= 5 :
-            for face in list_face:
-                thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-                threads_list.append(thread)
-                thread.start()
-        else :
-            for ind, face in enumerate(list_face):
-                thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-                threads_list.append(thread)
-                thread.start()
-                if ind == 4 : break
+        # if len(list_face) <= 5 :
+        #     for face in list_face:
+        #         thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+        #         threads_list.append(thread)
+        #         thread.start()
+        # else :
+        #     for ind, face in enumerate(list_face):
+        #         thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+        #         threads_list.append(thread)
+        #         thread.start()
+        #         if ind == 4 : break
 
-        for thread in threads_list:  # iterates over the threads
-            thread.join()
-            print(thread.is_alive())
+        #for thread in threads_list:  # iterates over the threads
+        #    thread.join()
+        #    print(thread.is_alive())
 
             #for face in list_face:
         #    face.show()
@@ -109,12 +111,27 @@ class AI_Yolov5():
         print(rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
         print(rtspVideo.get(cv2.CAP_PROP_FPS))
 
+        fps = rtspVideo.get(cv2.CAP_PROP_FPS)
+        all_frame_video = rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT)
+
+        current_frame_number =0
+
+        video_time = all_frame_video / fps
+
+        n_fps = 0.5*video_time
+
+        cadr_num = (video_time// n_fps)*fps
+        print(cadr_num)
+
         count: int = 0
+        n = 1
 
         self.clean_folder_faces()
 
         while rtspVideo.isOpened():
             ret, frame_nparray = rtspVideo.read()
+            current_frame_number+=1
+
 
             if ret:
                 count += 1
@@ -122,9 +139,10 @@ class AI_Yolov5():
                 print('Frame read failed')
                 break
 
-            if count == 30:
+            if count == int(fps*n):
+                frame_time = current_frame_number//fps
                 #img = cv2.cvtColor(frame_nparray.astype(np.uint8), cv2.COLOR_BGR2RGB)
-                self.analysis_image(frame_nparray)
+                self.analysis_image(frame_nparray, frame_time)
                 count = 0
         return self.fasec_image_list
 
