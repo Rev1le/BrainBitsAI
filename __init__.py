@@ -12,7 +12,7 @@ import json
 class ai_brain_bits():
 
     def __init__(self, config='config.json'):
-        with open(config, encoding='utf-8') as f:
+        with open(config) as f:
             const_data = json.load(f)
 
         self.PATH_PROJECT: str = os.getcwd()
@@ -43,7 +43,7 @@ class ai_brain_bits():
             face_standart_coords = self.format_coords(face_coords)
             cropped_img = image.crop((face_standart_coords)).resize((512, 512))
             #cropped_img = cropped_img.resize((512, 512))
-            cropped_img.save(f"{self.PATH_FOR_FACES}\\лицо_{uuid.uuid4()}.jpg", quality=95)
+            cropped_img.save(f"{self.PATH_FOR_FACES}\\face_{uuid.uuid4()}.jpg", quality=95)
             self.fasec_image_list.append(cropped_img)
         return True
 
