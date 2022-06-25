@@ -3,7 +3,7 @@ import time
 from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk
-#from emotions import Detector
+from emotions import Detector
 import cv2
 import numpy as np
 import json
@@ -55,7 +55,7 @@ class widjets():
                            columnspan: int = 1, padx: int = 0, pady: int = 0, text: str = '') -> None:
 
         if image is not None:
-            self.btn = Button(frame, text=text, image=PhotoImage(file=image), command=command)
+            self.btn = Button(frame, text=text, image=PhotoImage(file=f'button_img\\{image}'), command=command)
             self.btnbtn.grid(row=row, column=column, rowspan=rowspan, columnspan=columnspan, padx=padx, pady=padx)
         else:
             self.btnbtn = Button(frame, text=text)
@@ -65,7 +65,7 @@ class widjets():
                             text: str = '') -> None:
 
         if image is not None:
-            self.img = PhotoImage(file=image)
+            self.img = PhotoImage(file=f'button_img\\{image}')
 
             self.btn = Button(frame, activebackground='#313538', bg='#313538', image=self.img, command=command,
                               relief='flat', borderwidth=0).place(x=x, y=y, anchor=anchor)
@@ -98,6 +98,17 @@ def start_gui():
     # print('поток переставл рабоать')
     #exit()
     App = GUI(Tk())
+    wid = widjets()
+    wid1 = widjets()
+    wid2 = widjets()
+    #App.create_label(frame = App.get_canvas(), x=475,y=0, text = 'BrainBits', bg='#313538', fg = '#FFFFFE', font = ("MS Sans Serif",48), anchor='nw')
+
+    '''создание интрефейса'''
+    wid.create_label(frame=App.get_canvas(), x=450, y=0, text='BrainBits', bg='#313538', fg='#FFFFFE',
+                     font=("MS Sans Serif", 76), anchor='nw')
+    wid.create_button_place(frame=App.get_canvas(), image='button1.gif', command=browseFiles, x=332, y=370)
+    wid1.create_button_place(frame=App.get_canvas(), image='OneEmotion.gif', command=browseFiles, x=650, y=370)
+    wid2.create_button_place(frame=App.get_canvas(), image='Exit.gif', command=App.destroy, x=1050, y=600)
     App.mainloop()
 
 def browseFiles():

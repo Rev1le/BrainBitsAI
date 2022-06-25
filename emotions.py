@@ -4,7 +4,7 @@ import torch.backends.cudnn as cudnn
 import torchvision.transforms as transforms
 import cv2
 from PIL import Image
-#from vgg import create_RepVGG_A0 as create НЕПОНЯТКА
+from vgg import create_RepVGG_A0 as create #НЕПОНЯТКА
 import numpy as np
 # Load model
 import time
