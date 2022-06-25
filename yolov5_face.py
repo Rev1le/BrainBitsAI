@@ -54,10 +54,18 @@ class AI_Yolov5():
 
 
         threads_list =[]
-        for face in list_face:
-            thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-            threads_list.append(thread)
-            thread.start()
+        if len(list_face) <= 5 :
+            for face in list_face:
+                thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+                threads_list.append(thread)
+                thread.start()
+        else :
+            for ind, face in enumerate(list_face):
+                thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+                threads_list.append(thread)
+                thread.start()
+                if ind == 4 : break
+
         for thread in threads_list:  # iterates over the threads
             thread.join()
             print(thread.is_alive())
