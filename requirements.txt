@@ -1,0 +1,6 @@
+yolov5facedetector
+numpy
+PIL
+opencv-python
+uuid
+shutil
