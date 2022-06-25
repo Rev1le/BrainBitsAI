@@ -1,4 +1,5 @@
 *.idea
 VirtualPython310
 лица
+tmp
 /training_video.mp4
