@@ -12,6 +12,7 @@ from threading import Thread
 from asyncio import *
 import json
 import time
+import plots
 
 
 class AI_Yolov5():
@@ -31,6 +32,8 @@ class AI_Yolov5():
 
         self.model = YoloDetector(gpu=0, min_face=self.MIN_FACE_PERCENT)
         self.fasec_image_list = []
+
+        self.plots = plots.plots()
 
     def add_emotion_to_list(self, emotion):
         self.emotions_list.append(emotion)
@@ -160,6 +163,7 @@ class AI_Yolov5():
                 #break
 
             if count == delay_time:
+                self.plots.create_pirog(self.emotions_list)
                 #print(current_frame_number)
                 self.start_time = time.time()
                 frame_time = int(current_frame_number / fps)
