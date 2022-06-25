@@ -54,6 +54,7 @@ class Detector():
                 # Add appropriate label if required
                 result.append(
                     [f"{emotions[emotion]}{f' ({100 * y[i][emotion].item():.1f}%)' if conf else ''}", emotion])
+        print(result)
         return result
 
 # start_time = time.time()

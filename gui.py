@@ -1,5 +1,6 @@
 import os
 import time
+from threading import Thread
 from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk
@@ -7,6 +8,7 @@ from emotions import Detector
 import cv2
 import numpy as np
 import json
+import yolov5_face
 
 
 class GUI():
@@ -86,6 +88,7 @@ class widjets():
         self.entr = Entry(frame, width=width, height=height, font=font, bg=bg, fg=fg).place(x=x, y=y)
 
 
+
 #emo_detect = Detector('cpu')
 #App = GUI(Tk())
 #wid = widjets()
@@ -93,11 +96,39 @@ class widjets():
 #wid2 = widjets()
 
 def start_gui():
+    def browseFiles():
+        ''' эта функция обрабатывет кнопки. Здесь должны быть два метода поиска эмоций - один для толпы, второй для одного человека.
+        Пока что тут запуск проводника и обычное считывание эмоций и запуск дочернего окна с json'ом '''
+
+        # print('здесь будет класс, который примет следующий путь',filedialog.askopenfilename(initialdir="/", title="Select file",
+        #                                       filetypes = (("jpg files", "*.jpg"),("jpeg files", "*.jpeg"),("png files", "*.png"),("mp4 files", "*.mp4"),("all files",
+        #                                                     "*.*"))))
+        #print(emo_detect.detect_emotion \
+        #          (np.array([cv2.imread \
+        #                         (filedialog.askopenfilename(initialdir="/", title="Select file", \
+         #                                                    filetypes=(("jpg files", "*.jpg"), \
+        #                                                                ("jpeg files", "*.jpeg"), \
+         #                                                               ("png files", "*.png"), \
+         #                                                               ("mp4 files", "*.mp4"), \
+          #                                                              ("all files", "*.*"))))]), True))
+        path = filedialog.askopenfilename(initialdir="/", title="Select file", \
+                                        filetypes=(("jpg files", "*.jpg"), \
+                                                ("jpeg files", "*.jpeg"), \
+                                                ("png files", "*.png"), \
+                                                ("mp4 files", "*.mp4"), \
+                                                ("all files", "*.*")))
+        thread_ai = Thread(target=Yolov5.find_faces_from_video, args=[path], daemon=True)
+        thread_ai.start()
+        App.view_json(json.loads('{"a": 5, "b": 7}'))
+
+
     # print('поток рабоате')
     # time.sleep(5)
     # print('поток переставл рабоать')
     #exit()
     App = GUI(Tk())
+    Yolov5 = yolov5_face.AI_Yolov5()
+    emo_detect = Detector('cpu')
     wid = widjets()
     wid1 = widjets()
     wid2 = widjets()
@@ -111,22 +142,6 @@ def start_gui():
     wid2.create_button_place(frame=App.get_canvas(), image='Exit.gif', command=App.destroy, x=1050, y=600)
     App.mainloop()
 
-def browseFiles():
-    ''' эта функция обрабатывет кнопки. Здесь должны быть два метода поиска эмоций - один для толпы, второй для одного человека.
-    Пока что тут запуск проводника и обычное считывание эмоций и запуск дочернего окна с json'ом '''
-
-    # print('здесь будет класс, который примет следующий путь',filedialog.askopenfilename(initialdir="/", title="Select file",
-    #                                       filetypes = (("jpg files", "*.jpg"),("jpeg files", "*.jpeg"),("png files", "*.png"),("mp4 files", "*.mp4"),("all files",
-    #                                                     "*.*"))))
-    print(emo_detect.detect_emotion \
-              (np.array([cv2.imread \
-                             (filedialog.askopenfilename(initialdir="/", title="Select file", \
-                                                         filetypes=(("jpg files", "*.jpg"), \
-                                                                    ("jpeg files", "*.jpeg"), \
-                                                                    ("png files", "*.png"), \
-                                                                    ("mp4 files", "*.mp4"), \
-                                                                    ("all files", "*.*"))))]), True))
-    App.view_json(json.loads('{"a": 5, "b": 7}'))
 
 
 # App.create_label(frame = App.get_canvas(), x=475,y=0, text = 'BrainBits', bg='#313538', fg = '#FFFFFE', font = ("MS Sans Serif",48), anchor='nw')

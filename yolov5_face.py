@@ -7,6 +7,8 @@ import uuid
 import os
 import shutil
 import json
+from emotions import Detector
+from threading import Thread
 
 
 class AI_Yolov5():
@@ -14,6 +16,7 @@ class AI_Yolov5():
     def __init__(self, config='config.json'):
         with open(config, encoding='utf-8') as f:
             const_data = json.load(f)
+        #self.detector = Detector()
 
         self.PATH_PROJECT: str = os.getcwd()
         self.PATH_FOR_FACES: str = const_data['path_for_faces']
@@ -39,6 +42,13 @@ class AI_Yolov5():
         # Получаем массив картинок формата Image для каждого полученного фрейма
         ###
         list_face = self.create_list_image(list_face_coords, image)
+
+
+        threads_list =[]
+        for face in list_face:
+            thread = Thread(target=self.detector.detect_emotion, args= (face,True,))
+
+
         for face in list_face:
             face.show()
         return True
@@ -71,8 +81,9 @@ class AI_Yolov5():
         os.mkdir(file_path_folder)
         #print(file_path_folder.split('\\')[-1])
 
-    def find_faces_from_video(self):
-        rtspVideo = cv2.VideoCapture(self.PATH_TRAINING_VIDEO)
+    def find_faces_from_video(self, path):
+        rtspVideo = cv2.VideoCapture(path)#self.PATH_TRAINING_VIDEO)
+        self.PATH_TRAINING_VIDEO = path
 
         print(rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
         print(rtspVideo.get(cv2.CAP_PROP_FPS))
@@ -109,3 +120,6 @@ class AI_Yolov5():
 
         return coords
 
+def start_ai(path):
+    yolov5 = AI_Yolov5()
+    yolov5.find_faces_from_video(path=path)
