@@ -44,7 +44,8 @@ class Detector():
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
                 normalize,
-            ])(Image.fromarray(image)) for image in images])
+            #])(Image.fromarray(image)) for image in images]) забрал от греха подальге
+            ])(image) for image in images])
             # Feed through the model
             y = self.model(x.to(self.dev))
             result = []

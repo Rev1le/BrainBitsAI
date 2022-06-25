@@ -16,7 +16,7 @@ class AI_Yolov5():
     def __init__(self, config='config.json'):
         with open(config, encoding='utf-8') as f:
             const_data = json.load(f)
-        #self.detector = Detector()
+        self.detector = Detector('cpu')
 
         self.PATH_PROJECT: str = os.getcwd()
         self.PATH_FOR_FACES: str = const_data['path_for_faces']
@@ -46,11 +46,15 @@ class AI_Yolov5():
 
         threads_list =[]
         for face in list_face:
-            thread = Thread(target=self.detector.detect_emotion, args= (face,True,))
+            thread = Thread(target=self.detector.detect_emotion, args= ([face],True,), daemon=True)
+            threads_list.append(thread)
+            thread.start()
+        for thread in threads_list:  # iterates over the threads
+            thread.join()
+            print(thread.is_alive())
 
-
-        for face in list_face:
-            face.show()
+            #for face in list_face:
+        #    face.show()
         return True
 
 
