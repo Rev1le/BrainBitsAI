@@ -2,12 +2,14 @@ import os
 import time
 from threading import Thread
 from tkinter import *
+#from tk import *
 from tkinter import filedialog
 from PIL import ImageTk
 from emotions import Detector
 import cv2
 import numpy as np
 import json
+import asyncio
 import yolov5_face
 
 
@@ -95,7 +97,8 @@ class widjets():
 #wid1 = widjets()
 #wid2 = widjets()
 
-def start_gui():
+def start_gui(yolov5_model):
+
     def browseFiles():
         ''' эта функция обрабатывет кнопки. Здесь должны быть два метода поиска эмоций - один для толпы, второй для одного человека.
         Пока что тут запуск проводника и обычное считывание эмоций и запуск дочернего окна с json'ом '''
@@ -117,10 +120,18 @@ def start_gui():
                                                 ("png files", "*.png"), \
                                                 ("mp4 files", "*.mp4"), \
                                                 ("all files", "*.*")))
-        thread_ai = Thread(target=Yolov5.find_faces_from_video, args=[path], daemon=True)
-        thread_ai.start()
-        thread_ai.join()
+        #thread_ai = Thread(target=Yolov5.find_faces_from_video, args=[path], daemon=True)
+        #thread_ai.start()
+        #thread_ai.join()
+        yolov5_model.cont = False
+
+
+        #Yolov5.find_faces_from_video(path)
+        #asyncio.run(Yolov5.find_faces_from_video(path))
+
         App.view_json(json.loads('{"a": 5, "b": 7}'))
+
+
 
 
     # print('поток рабоате')

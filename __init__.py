@@ -11,16 +11,16 @@ class App:
 
 
     def start_ai(self):
-        # yolov5_model = yolov5_face.AI_Yolov5()
+        yolov5_model = yolov5_face.AI_Yolov5()
         #
-        # thread_yolov_ai = Thread(target=yolov5_model.find_faces_from_video, daemon=True)
+        thread_yolov_ai = Thread(target=yolov5_model.find_faces_from_video,args=["D:\\Project\\Python\\BrainBitsAI\\training_video.mp4"], daemon=True)
         #
-        # thread_gui = Thread(target=gui.start_gui)
-        # thread_yolov_ai.start()
-        # thread_gui.start()
+        thread_gui = Thread(target=gui.start_gui, args=[yolov5_model])
+        thread_yolov_ai.start()
+        thread_gui.start()
         #yolov5_model = yolov5_face.AI_Yolov5()
-        #yolov5_model.find_faces_from_video()
-        gui.start_gui()
+        #yolov5_model.find_faces_from_video("D:\\Project\\Python\\BrainBitsAI\\training_video.mp4")
+        #gui.start_gui()
 
 
 

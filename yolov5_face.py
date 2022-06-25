@@ -9,9 +9,11 @@ import shutil
 import json
 from emotions import Detector
 from threading import Thread
+from asyncio import *
 
 
 class AI_Yolov5():
+    cont = True
 
     def __init__(self, config='config.json'):
         with open(config, encoding='utf-8') as f:
@@ -36,7 +38,7 @@ class AI_Yolov5():
     def get_emotions_list(self):
         return self.emotions_list
 
-    def analysis_image(self, img_array):
+    def analysis_image(self, img_array, frame_time):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
         #cv2.imwrite(path_frame_tmp, img_array)
         img_nparray_rgb = cv2.cvtColor(img_array.astype(np.uint8), cv2.COLOR_BGR2RGB)
@@ -52,25 +54,27 @@ class AI_Yolov5():
         ###
         list_face = self.create_list_image(list_face_coords, image)
 
+        #if len(list_face) > 0:
+        #    self.detector.detect_emotion(list_face, self.add_emotion_to_list, True)
 
-        threads_list =[]
+        threads_list = []
         if len(list_face) <= 5 :
-            for face in list_face:
-                thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-                threads_list.append(thread)
-                thread.start()
-        else :
-            for ind, face in enumerate(list_face):
-                thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-                threads_list.append(thread)
-                thread.start()
-                if ind == 4 : break
+             for face in list_face:
+                 thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+                 threads_list.append(thread)
+                 thread.start()
+        else:
+             for ind, face in enumerate(list_face):
+                 thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+                 threads_list.append(thread)
+                 thread.start()
+                 if ind == 4 : break
 
         for thread in threads_list:  # iterates over the threads
             thread.join()
             print(thread.is_alive())
 
-            #for face in list_face:
+        # for face in list_face:
         #    face.show()
         return True
 
@@ -83,6 +87,7 @@ class AI_Yolov5():
             list_image.append(face_img)
         return list_image
 
+
     def save_faces(self, list_face_coords, image):
         for face_coords in list_face_coords:
             # стандартизация лиц
@@ -93,6 +98,7 @@ class AI_Yolov5():
             self.fasec_image_list.append(cropped_img)
         return True
 
+
     def clean_folder_faces(self):
         file_path_folder = self.PATH_FOR_FACES
         try:
@@ -102,19 +108,37 @@ class AI_Yolov5():
         os.mkdir(file_path_folder)
         #print(file_path_folder.split('\\')[-1])
 
+
     def find_faces_from_video(self, path):
         rtspVideo = cv2.VideoCapture(path)#self.PATH_TRAINING_VIDEO)
         self.PATH_TRAINING_VIDEO = path
 
+        while self.cont:
+            print(2)
+
         print(rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
         print(rtspVideo.get(cv2.CAP_PROP_FPS))
 
+        fps = rtspVideo.get(cv2.CAP_PROP_FPS)
+        all_frame_video = rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT)
+
+        current_frame_number = 0
+
+        video_time = all_frame_video / fps
+
+        n_fps = 0.5 * video_time
+
+        cadr_num = (video_time // n_fps) * fps
+        print(cadr_num)
+
         count: int = 0
+        n = 1
 
         self.clean_folder_faces()
 
         while rtspVideo.isOpened():
             ret, frame_nparray = rtspVideo.read()
+            current_frame_number += 1
 
             if ret:
                 count += 1
@@ -122,9 +146,10 @@ class AI_Yolov5():
                 print('Frame read failed')
                 break
 
-            if count == 30:
-                #img = cv2.cvtColor(frame_nparray.astype(np.uint8), cv2.COLOR_BGR2RGB)
-                self.analysis_image(frame_nparray)
+            if count == int(fps * 10):
+                frame_time = current_frame_number // fps
+                # img = cv2.cvtColor(frame_nparray.astype(np.uint8), cv2.COLOR_BGR2RGB)
+                self.analysis_image(frame_nparray, frame_time)
                 count = 0
         return self.fasec_image_list
 
