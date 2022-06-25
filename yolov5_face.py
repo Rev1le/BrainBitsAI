@@ -10,6 +10,8 @@ import json
 from emotions import Detector
 from threading import Thread
 from asyncio import *
+import json
+import time
 
 
 class AI_Yolov5():
@@ -32,11 +34,17 @@ class AI_Yolov5():
 
     def add_emotion_to_list(self, emotion):
         self.emotions_list.append(emotion)
+
         print(self.emotions_list)
+        print(self.start_time - time.time())
+
 
     @property
     def get_emotions_list(self):
         return self.emotions_list
+
+    def save_json_emotions(self):
+        pass
 
     def analysis_image(self, img_array, frame_time):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
@@ -113,8 +121,8 @@ class AI_Yolov5():
         rtspVideo = cv2.VideoCapture(path)#self.PATH_TRAINING_VIDEO)
         self.PATH_TRAINING_VIDEO = path
 
-        while self.cont:
-            print(2)
+        #while self.cont:
+        #    print(2)
 
         print(rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
         print(rtspVideo.get(cv2.CAP_PROP_FPS))
@@ -147,6 +155,7 @@ class AI_Yolov5():
                 break
 
             if count == int(fps * 10):
+                self.start_time= time.time()
                 frame_time = current_frame_number // fps
                 # img = cv2.cvtColor(frame_nparray.astype(np.uint8), cv2.COLOR_BGR2RGB)
                 self.analysis_image(frame_nparray, frame_time)

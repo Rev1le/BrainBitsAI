@@ -97,7 +97,7 @@ class widjets():
 #wid1 = widjets()
 #wid2 = widjets()
 
-def start_gui(yolov5_model):
+def start_gui(thread_yolov_ai):
 
     def browseFiles():
         ''' эта функция обрабатывет кнопки. Здесь должны быть два метода поиска эмоций - один для толпы, второй для одного человека.
@@ -123,7 +123,7 @@ def start_gui(yolov5_model):
         #thread_ai = Thread(target=Yolov5.find_faces_from_video, args=[path], daemon=True)
         #thread_ai.start()
         #thread_ai.join()
-        yolov5_model.cont = False
+        thread_yolov_ai.start()
 
 
         #Yolov5.find_faces_from_video(path)
