@@ -89,6 +89,7 @@ class widjets():
 #wid = widjets()
 #wid1 = widjets()
 #wid2 = widjets()
+
 def start_gui():
     App = GUI(Tk())
     App.mainloop()

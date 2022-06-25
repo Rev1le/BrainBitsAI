@@ -8,7 +8,7 @@ from threading import Thread
 class App:
     def __init__(self, path): #конфиг по умолчанию
         self.__video_path = path
-        #self.gui = gui.GUI(Tk())
+
 
     def start_ai(self):
         yolov5_model = yolov5_face.AI_Yolov5()
