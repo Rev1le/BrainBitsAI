@@ -1,3 +1,5 @@
+import os
+import time
 from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk
@@ -91,6 +93,10 @@ class widjets():
 #wid2 = widjets()
 
 def start_gui():
+    # print('поток рабоате')
+    # time.sleep(5)
+    # print('поток переставл рабоать')
+    #exit()
     App = GUI(Tk())
     App.mainloop()
 
