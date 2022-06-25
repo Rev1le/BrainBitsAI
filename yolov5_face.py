@@ -22,11 +22,11 @@ class AI_Yolov5():
             const_data = json.load(f)
         self.detector = Detector('cpu')
         self.emotions_list = []
+        self.emotions_dict_json = {}
 
         self.PATH_PROJECT: str = os.getcwd()
         self.PATH_FOR_FACES: str = const_data['path_for_faces']
         self.MIN_FACE_PERCENT: int = const_data['min_face_percent']
-        self.PATH_TRAINING_VIDEO: str = const_data['path_url_training_video']
         self.SAVING_FRAMES_PER_SECOND: int = const_data['fps_received']
 
         self.model = YoloDetector(gpu=0, min_face=self.MIN_FACE_PERCENT)
@@ -36,7 +36,7 @@ class AI_Yolov5():
         self.emotions_list.append(emotion)
 
         print(self.emotions_list)
-        print(self.start_time - time.time())
+        print('Время выполнения',self.start_time - time.time())
 
 
     @property
@@ -44,7 +44,9 @@ class AI_Yolov5():
         return self.emotions_list
 
     def save_json_emotions(self):
-        pass
+        json_string = json.dumps(self.emotions_dict_json)
+        with open('emotions.json', "w+") as f:
+            f.write(json_string)
 
     def analysis_image(self, img_array, frame_time):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
@@ -62,25 +64,30 @@ class AI_Yolov5():
         ###
         list_face = self.create_list_image(list_face_coords, image)
 
-        #if len(list_face) > 0:
-        #    self.detector.detect_emotion(list_face, self.add_emotion_to_list, True)
+        if len(list_face) > 0:
+            result_emotions = self.detector.detect_emotion(list_face, self.add_emotion_to_list, True)
+            self.emotions_dict_json[frame_time] = result_emotions
+            print(self.emotions_dict_json)
+            for emotion in result_emotions:
+                self.add_emotion_to_list(emotion)
 
-        threads_list = []
-        if len(list_face) <= 5 :
-             for face in list_face:
-                 thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-                 threads_list.append(thread)
-                 thread.start()
-        else:
-             for ind, face in enumerate(list_face):
-                 thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-                 threads_list.append(thread)
-                 thread.start()
-                 if ind == 4 : break
 
-        for thread in threads_list:  # iterates over the threads
-            thread.join()
-            print(thread.is_alive())
+        # threads_list = []
+        # if len(list_face) <= 5 :
+        #      for face in list_face:
+        #          thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+        #          threads_list.append(thread)
+        #          thread.start()
+        # else:
+        #      for ind, face in enumerate(list_face):
+        #          thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
+        #          threads_list.append(thread)
+        #          thread.start()
+        #          if ind == 4 : break
+        #
+        # for thread in threads_list:  # iterates over the threads
+        #     thread.join()
+        #     print(thread.is_alive())
 
         # for face in list_face:
         #    face.show()
@@ -117,30 +124,28 @@ class AI_Yolov5():
         #print(file_path_folder.split('\\')[-1])
 
 
-    def find_faces_from_video(self, path):
-        rtspVideo = cv2.VideoCapture(path)#self.PATH_TRAINING_VIDEO)
+    def find_faces_from_video(self, path, video_length):
+        print("Видео для обработки", path())
+        print('Длина видео ', video_length())
+        rtspVideo = cv2.VideoCapture(path())
         self.PATH_TRAINING_VIDEO = path
+        current_frame_number = 0
+        count = 0
 
-        #while self.cont:
-        #    print(2)
-
-        print(rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
-        print(rtspVideo.get(cv2.CAP_PROP_FPS))
+        print('Всего кадров в идео', rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
+        print('Кадров в секунду в видео', rtspVideo.get(cv2.CAP_PROP_FPS))
 
         fps = rtspVideo.get(cv2.CAP_PROP_FPS)
         all_frame_video = rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT)
 
-        current_frame_number = 0
+        delay_time = 1
 
-        video_time = all_frame_video / fps
-
-        n_fps = 0.5 * video_time
-
-        cadr_num = (video_time // n_fps) * fps
-        print(cadr_num)
-
-        count: int = 0
-        n = 1
+        if video_length() == 'short':
+            print('видео короткое')
+            delay_time = int(fps * 1)+1
+        elif video_length() == 'long':
+            print('видео длинное')
+            delay_time = int(fps * 5)+1
 
         self.clean_folder_faces()
 
@@ -152,14 +157,19 @@ class AI_Yolov5():
                 count += 1
             else:
                 print('Frame read failed')
-                break
+                #break
 
-            if count == int(fps * 10):
-                self.start_time= time.time()
-                frame_time = current_frame_number // fps
+            if count == delay_time:
+                #print(current_frame_number)
+                self.start_time = time.time()
+                frame_time = int(current_frame_number / fps)
+                #print(frame_time)
                 # img = cv2.cvtColor(frame_nparray.astype(np.uint8), cv2.COLOR_BGR2RGB)
                 self.analysis_image(frame_nparray, frame_time)
                 count = 0
+
+            if count == 40 :
+                self.save_json_emotions()
         return self.fasec_image_list
 
     @staticmethod
