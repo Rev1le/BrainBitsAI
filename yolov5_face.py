@@ -17,6 +17,7 @@ class AI_Yolov5():
         with open(config, encoding='utf-8') as f:
             const_data = json.load(f)
         self.detector = Detector('cpu')
+        self.emotions_list = []
 
         self.PATH_PROJECT: str = os.getcwd()
         self.PATH_FOR_FACES: str = const_data['path_for_faces']
@@ -26,6 +27,14 @@ class AI_Yolov5():
 
         self.model = YoloDetector(gpu=0, min_face=self.MIN_FACE_PERCENT)
         self.fasec_image_list = []
+
+    def add_emotion_to_list(self, emotion):
+        self.emotions_list.append(emotion)
+        print(self.emotions_list)
+
+    @property
+    def get_emotions_list(self):
+        return self.emotions_list
 
     def analysis_image(self, img_array):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
@@ -46,7 +55,7 @@ class AI_Yolov5():
 
         threads_list =[]
         for face in list_face:
-            thread = Thread(target=self.detector.detect_emotion, args= ([face],True,), daemon=True)
+            thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
             threads_list.append(thread)
             thread.start()
         for thread in threads_list:  # iterates over the threads

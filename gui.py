@@ -119,6 +119,7 @@ def start_gui():
                                                 ("all files", "*.*")))
         thread_ai = Thread(target=Yolov5.find_faces_from_video, args=[path], daemon=True)
         thread_ai.start()
+        thread_ai.join()
         App.view_json(json.loads('{"a": 5, "b": 7}'))
 
 
