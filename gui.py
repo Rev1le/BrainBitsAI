@@ -99,10 +99,9 @@ class GUI(widjets):
         try:
             # self.img = PhotoImage("pie.png")
             # self.panel = Label(self.win, image=self.img)
-            self.img = Image(r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
-            self.img = PhotoImage(self.img)
-            self.panel = Label(self.windown, image=self.img)
-            self.panel.pack()
+            self.img = PhotoImage(file= r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
+            self.panel.update() #= Label(self.win, image=self.img)
+            #panel.pack(side='top')
         except TclError:
             pass
 
@@ -115,11 +114,12 @@ class GUI(widjets):
             # self.img = PhotoImage("pie.png")
             # self.panel = Label(self.win, image=self.img)
             # self.panel.pack(side="bottom")
-            self.img = Image(r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
-            self.img = PhotoImage(self.img)
-            self.panel = Label(self.window, image=self.img)
+            self.img = PhotoImage(file=r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
+            self.panel = Label(self.win, image=self.img)
             #self.panel.image = self.img
             self.panel.pack(side='top')
+            time.sleep(0.8)
+            self.win.destroy()
         except TclError:
             pass
 

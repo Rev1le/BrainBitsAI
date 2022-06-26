@@ -144,7 +144,10 @@ class AI_Yolov5():
 
         delay_time = 1
 
-        second_tk()
+        try:
+            second_tk()
+        except Exception:
+            pass
 
         if video_length() == 'short':
             print('видео короткое')
@@ -168,6 +171,10 @@ class AI_Yolov5():
 
             if count == delay_time:
                 #update()
+                try:
+                 second_tk()
+                except Exception:
+                    pass
                 #view_json_method()
                 self.plots.create_pirog(self.emotions_list)
                 #print(current_frame_number)

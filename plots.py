@@ -1,4 +1,6 @@
 import random
+import time
+
 import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
@@ -56,10 +58,12 @@ class plots():
         print(list_mass)
 
         self.ax.pie(list_list_top, labels=list_mass.keys(), autopct='%1.1f%%')
-        try:
-            plt.show()
-        except:
-            pass
+        #try:
+            #plt.show(block=False)
+            #time.sleep(0.5)
+            #plt.close()
+        #except:
+         #   pass
         # fig.savefig('pie.png')
         # img_array = Image.open('pie.png')
         # plt.imshow(np.array(img_array))
