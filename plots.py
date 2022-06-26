@@ -1,6 +1,9 @@
 import random
+import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
+matplotlib.use('TkAgg')
+from PIL import Image
 
 
 class plots():
@@ -20,6 +23,10 @@ class plots():
         plt.savefig('myfig.png')
 
     def create_pirog(self, data: list):
+        try:
+            plt.close(self.fig)
+        except:
+            pass
         list_name_emotions = []
 
         if len(data) == 0:
@@ -29,11 +36,11 @@ class plots():
             em = emotion[0].split()[0]
             list_name_emotions.append(em)
 
-        fig, ax = plt.subplots()
+        self.fig, self.ax = plt.subplots()
 
         self.all_data += list_name_emotions
         emotions = {i: self.all_data.count(i) for i in self.RangeDict}
-        ax.axis('equal')
+        self.ax.axis('equal')
         precent = [emotions[i] / len(emotions) for i in emotions]
         print(precent)
         print(emotions)
@@ -48,6 +55,13 @@ class plots():
 
         print(list_mass)
 
-        ax.pie(list_list_top, labels=list_mass.keys(), autopct='%1.1f%%')
-        fig.savefig('pie.png')
+        self.ax.pie(list_list_top, labels=list_mass.keys(), autopct='%1.1f%%')
+        try:
+            plt.show()
+        except:
+            pass
+        # fig.savefig('pie.png')
+        # img_array = Image.open('pie.png')
+        # plt.imshow(np.array(img_array))
+        #plt.imshow('pie.png')
 

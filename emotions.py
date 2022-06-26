@@ -10,8 +10,8 @@ import numpy as np
 import time
 
 # 8 Emotions
-emotions = ("anger", "contempt", "disgust", "fear", "happy", "neutral", "sad", "surprise")
-
+#emotions = ("anger", "contempt", "disgust", "fear", "happy", "neutral", "sad", "surprise")
+emotions = ("angry","disgust","fear","happy","sad","surprise","neutral")
 
 class Detector():
     def __init__(self, device):
@@ -53,6 +53,17 @@ class Detector():
             for i in range(y.size()[0]):
                 # Add emotion to result
                 emotion = (max(y[i]) == y[i]).nonzero().item()
+                # меняет местами эмоции для правильности кейса
+                if emotion > 1:
+                    emotion -= 1
+                    if emotion == 4:
+                        emotion = 6
+                    elif emotion == 5:
+                        emotion = 4
+                    elif emotion == 6:
+                        emotion = 5
+                    else:
+                        pass
                 # Add appropriate label if required
                 result.append(
                     [f"{emotions[emotion]}{f' ({100 * y[i][emotion].item():.1f}%)' if conf else ''}", emotion])

@@ -67,7 +67,7 @@ class GUI(widjets):
             self.browseFiles()
             AI_thread.start()  # Начинаем обработку видео
             #AI_thread.join()
-            self.view_json(json.loads('{"a": 5, "b": 7}'))
+            #self.view_json(json.loads('{"a": 5, "b": 7}'))
 
         short_video = lambda : command_button('short')
         long_video = lambda : command_button('long')
@@ -95,19 +95,52 @@ class GUI(widjets):
                                  x=1050, y=600)
         self.mainloop()
 
-    def view_json(self, json: json) -> None:
+    def update(self):
+        try:
+            # self.img = PhotoImage("pie.png")
+            # self.panel = Label(self.win, image=self.img)
+            self.img = Image(r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
+            self.img = PhotoImage(self.img)
+            self.panel = Label(self.windown, image=self.img)
+            self.panel.pack()
+        except TclError:
+            pass
+
+
+    def second_tk(self):
+        self.win = Toplevel(self.window)
+        self.win.geometry('640x480+700+300')
+        self.win.resizable(False, False)
+        try:
+            # self.img = PhotoImage("pie.png")
+            # self.panel = Label(self.win, image=self.img)
+            # self.panel.pack(side="bottom")
+            self.img = Image(r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
+            self.img = PhotoImage(self.img)
+            self.panel = Label(self.window, image=self.img)
+            #self.panel.image = self.img
+            self.panel.pack(side='top')
+        except TclError:
+            pass
+
+    def view_json(self) -> None:
         '''этот метод создаёт дочерее окно с текстовым полем и читает предполагаемый json (надо настроить)'''
 
-        win = Toplevel(self.window)
-        win.geometry('640x480+700+300')
-        win.resizable(False, False)
-        c = Canvas(win, height=480, width=640, bg='white')
-        c.pack()
-        text = Text(c)
-        text.pack()
-        for k in json:
-            text.insert(END, '{} = {}\n'.format(k, json[k]))
-        text.config(state=DISABLED)
+        self.win = Toplevel(self.window)
+        self.win.geometry('640x480+700+300')
+        self.win.resizable(False, False)
+        self.img = PhotoImage("pie.png")
+        print(img)
+        self.panel = Label(win, image=img)
+        self.panel.pack()
+        #win.mainloop()
+        # c = Canvas(win, height=480, width=640, bg='white')
+        # c.pack()
+        # text = Text(c)
+        # text.pack()
+        # for k in json:
+        #     text.insert(END, '{} = {}\n'.format(k, json[k]))
+        # text.config(state=DISABLED)
 
     def browseFiles(self):
         path = filedialog.askopenfilename(initialdir="/", title="Select file", \

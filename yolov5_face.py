@@ -50,6 +50,7 @@ class AI_Yolov5():
         json_string = json.dumps(self.emotions_dict_json)
         with open('emotions.json', "w+") as f:
             f.write(json_string)
+        return self.emotions_dict_json
 
     def analysis_image(self, img_array, frame_time):
         path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
@@ -127,7 +128,7 @@ class AI_Yolov5():
         #print(file_path_folder.split('\\')[-1])
 
 
-    def find_faces_from_video(self, path, video_length):
+    def find_faces_from_video(self, path, video_length, view_json_method = None, second_tk =None , update = None):
         print("Видео для обработки", path())
         print('Длина видео ', video_length())
         rtspVideo = cv2.VideoCapture(path())
@@ -143,6 +144,8 @@ class AI_Yolov5():
 
         delay_time = 1
 
+        second_tk()
+
         if video_length() == 'short':
             print('видео короткое')
             delay_time = int(fps * 1)+1
@@ -156,13 +159,16 @@ class AI_Yolov5():
             ret, frame_nparray = rtspVideo.read()
             current_frame_number += 1
 
+
             if ret:
                 count += 1
             else:
                 print('Frame read failed')
-                #break
+                break
 
             if count == delay_time:
+                #update()
+                #view_json_method()
                 self.plots.create_pirog(self.emotions_list)
                 #print(current_frame_number)
                 self.start_time = time.time()
@@ -174,7 +180,7 @@ class AI_Yolov5():
 
             if count == 40 :
                 self.save_json_emotions()
-        return self.fasec_image_list
+        return self.save_json_emotions()
 
     @staticmethod
     def format_coords(coords: list):
