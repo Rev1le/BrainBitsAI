@@ -1,18 +1,19 @@
+import asyncio
+
 from yolov5facedetector.face_detector import YoloDetector
 
 import numpy as np
 from PIL import Image
 import cv2
 import uuid
-import os
-import shutil
-import json
+import os, shutil
 from emotions import Detector
-from threading import Thread
-from asyncio import *
-import json
 import time
 import plots
+import json
+from asyncio import *
+#from threading import Thread
+
 
 
 class AI_Yolov5():
@@ -28,12 +29,12 @@ class AI_Yolov5():
         self.PATH_PROJECT: str = os.getcwd()
         self.PATH_FOR_FACES: str = const_data['path_for_faces']
         self.MIN_FACE_PERCENT: int = const_data['min_face_percent']
-        self.SAVING_FRAMES_PER_SECOND: int = const_data['fps_received']
+        #self.SAVING_FRAMES_PER_SECOND: int = const_data['fps_received']
 
         self.model = YoloDetector(gpu=0, min_face=self.MIN_FACE_PERCENT)
         self.fasec_image_list = []
-
         self.plots = plots.plots()
+
 
     def add_emotion_to_list(self, emotion):
         self.emotions_list.append(emotion)
@@ -42,9 +43,11 @@ class AI_Yolov5():
         print('Время выполнения',self.start_time - time.time())
 
 
+
     @property
     def get_emotions_list(self):
         return self.emotions_list
+
 
     def save_json_emotions(self):
         json_string = json.dumps(self.emotions_dict_json)
@@ -69,33 +72,39 @@ class AI_Yolov5():
         list_face = self.create_list_image(list_face_coords, image)
 
         if len(list_face) > 0:
-            result_emotions = self.detector.detect_emotion(list_face, self.add_emotion_to_list, True)
-            self.emotions_dict_json[frame_time] = result_emotions
-            print(self.emotions_dict_json)
-            for emotion in result_emotions:
-                self.add_emotion_to_list(emotion)
+            #self.detector.asinhron_detect_emotion()
+            #result_emotions = self.detector.detect_emotion(list_face, self.add_emotion_to_list, True)
+            #for face in list_face:
+            #    self.detector.asinhron_detect_emotion()
+
+            #try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(self.emo_detect_async(list_face, loop))
+            #except:
+            #    pass
 
 
-        # threads_list = []
-        # if len(list_face) <= 5 :
-        #      for face in list_face:
-        #          thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-        #          threads_list.append(thread)
-        #          thread.start()
-        # else:
-        #      for ind, face in enumerate(list_face):
-        #          thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-        #          threads_list.append(thread)
-        #          thread.start()
-        #          if ind == 4 : break
-        #
-        # for thread in threads_list:  # iterates over the threads
-        #     thread.join()
-        #     print(thread.is_alive())
-
-        # for face in list_face:
-        #    face.show()
+            #result_emotions = self.detector.asinhron_detect_emotion(list_face, self.add_emotion_to_list, True)
+            #self.emotions_dict_json[frame_time] = result_emotions
+            #print(self.emotions_dict_json)
+            #for emotion in result_emotions:
+            #    self.add_emotion_to_list(emotion)
         return True
+
+    async def emo_detect_async(self, list_face, loop):
+        task_list = []
+        for ind, face in enumerate(list_face):
+            task = loop.create_task(self.async_func(ind, face, self.add_emotion_to_list))
+            task_list.append(task)
+        await asyncio.wait(task_list)
+        return
+
+    async def async_func(self,ind_task, face, func_add_emo_to_list):
+        print(f'{ind_task}: Запуск ...')
+        self.detector.detect_emotion(face, func_add_emo_to_list, True)
+        print(f'{ind_task}: Завершено ...')
+        return
 
 
     def create_list_image(self, list_nparray, target_img):
@@ -109,10 +118,9 @@ class AI_Yolov5():
 
     def save_faces(self, list_face_coords, image):
         for face_coords in list_face_coords:
-            # стандартизация лиц
+            # стандартизация лиц для обработки эмоций
             face_standart_coords = self.format_coords(face_coords)
             cropped_img = image.crop((face_standart_coords)).resize((512, 512))
-            #cropped_img = cropped_img.resize((512, 512))
             cropped_img.save(f"{self.PATH_FOR_FACES}\\лицо_{uuid.uuid4()}.jpg", quality=95)
             self.fasec_image_list.append(cropped_img)
         return True
@@ -125,35 +133,33 @@ class AI_Yolov5():
         except FileNotFoundError :
             print("удаление паки с лицами не было произведено")
         os.mkdir(file_path_folder)
-        #print(file_path_folder.split('\\')[-1])
-
 
     def find_faces_from_video(self, path, video_length, view_json_method = None, second_tk =None , update = None):
         print("Видео для обработки", path())
-        print('Длина видео ', video_length())
+        print('Видео считается ', video_length())
         rtspVideo = cv2.VideoCapture(path())
         self.PATH_TRAINING_VIDEO = path
         current_frame_number = 0
         count = 0
+        delay_time = 1
 
-        print('Всего кадров в идео', rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
+        print('Всего кадров в видео', rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT))
         print('Кадров в секунду в видео', rtspVideo.get(cv2.CAP_PROP_FPS))
 
         fps = rtspVideo.get(cv2.CAP_PROP_FPS)
         all_frame_video = rtspVideo.get(cv2.CAP_PROP_FRAME_COUNT)
 
-        delay_time = 1
 
-        try:
-            second_tk()
-        except Exception:
-            pass
+        #try:
+        #    second_tk()
+        #except Exception:
+        #    pass
 
         if video_length() == 'short':
-            print('видео короткое')
+            print('Обработка короткого видео')
             delay_time = int(fps * 1)+1
         elif video_length() == 'long':
-            print('видео длинное')
+            print('Обработка длинного видео')
             delay_time = int(fps * 5)+1
 
         self.clean_folder_faces()
@@ -170,23 +176,19 @@ class AI_Yolov5():
                 break
 
             if count == delay_time:
-                #update()
-                try:
-                 second_tk()
-                except Exception:
-                    pass
-                #view_json_method()
-                self.plots.create_pirog(self.emotions_list)
-                #print(current_frame_number)
-                self.start_time = time.time()
-                frame_time = int(current_frame_number / fps)
-                #print(frame_time)
-                # img = cv2.cvtColor(frame_nparray.astype(np.uint8), cv2.COLOR_BGR2RGB)
-                self.analysis_image(frame_nparray, frame_time)
+
+                #try:
+                #    second_tk()
+                #except Exception:
+                #    pass
+
+                #self.plots.create_pirog(self.emotions_list)
+                self.start_time = time.time() # Время начала анализа данных
+                global_frame_time = int(current_frame_number / fps)
+                self.analysis_image(frame_nparray, global_frame_time)
                 count = 0
 
-            if count == 40 :
-                self.save_json_emotions()
+            if count == 40: self.save_json_emotions() #Сохранение резулттата каждые 40 секунд
         return self.save_json_emotions()
 
     @staticmethod
@@ -201,7 +203,3 @@ class AI_Yolov5():
         coords[1] += increase
 
         return coords
-
-def start_ai(path):
-    yolov5 = AI_Yolov5()
-    yolov5.find_faces_from_video(path=path)

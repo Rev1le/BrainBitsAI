@@ -1,11 +1,11 @@
-import random
-import time
-
 import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
-matplotlib.use('TkAgg')
+
+#matplotlib.use('TkAgg')
 from PIL import Image
+import random
+import time
 
 
 class plots():

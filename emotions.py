@@ -34,7 +34,7 @@ class Detector():
         cudnn.benchmark = True
         self.model.eval()
 
-    def detect_emotion(self, images, func, conf=True):
+    def detect_emotion(self, image, func_add_emo_to_list, conf=True):
         with torch.no_grad():
             # Normalise and transform images
             normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -43,10 +43,9 @@ class Detector():
                 transforms.Resize(256),
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
-                normalize,
+                normalize])(image)])
             #])(Image.fromarray(image)) for image in images]) забрал от греха подальге
             #])(image) for image in images])
-            ])(image) for image in images])
             # Feed through the model
             y = self.model(x.to(self.dev))
             result = []
@@ -68,10 +67,5 @@ class Detector():
                 result.append(
                     [f"{emotions[emotion]}{f' ({100 * y[i][emotion].item():.1f}%)' if conf else ''}", emotion])
         print(result)
-        #func(result)
+        func_add_emo_to_list(result)
         return result
-
-# start_time = time.time()
-# im = np.array([cv2.imread("test2.jpg")])
-# init('cpu')
-# print(detect_emotion(im,True),"--- %s seconds ---" % (time.time() - start_time))

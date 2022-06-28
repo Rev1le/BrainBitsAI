@@ -1,15 +1,16 @@
-import os
 import time
 from threading import Thread
 from tkinter import *
-#from tk import *
 from tkinter import filedialog
-from PIL import ImageTk
-from emotions import Detector
-import cv2
-import numpy as np
-import json
 import yolov5_face
+import asyncio
+#from PIL import ImageTk
+#from emotions import Detector
+#import cv2
+#import numpy as np
+#import json
+#from tk import *
+#import os
 
 
 class widjets():
@@ -52,20 +53,35 @@ class GUI(widjets):
         self.window.resizable(change_size['width'], change_size['height'])
         self.window.geometry(f'{width}x{height}+300+100')
 
+        self.yolov5 = yolov5_face.AI_Yolov5()
+
 
     def get_video_path(self):
         return self.__video_path_private
     def get_lenght_video(self):
         return self.__lenght_video
 
-    def start_gui(self, AI_thread):
+    async def thread_yolov(self):
+        thr = Thread(target=self.yolov5.find_faces_from_video,  # Создаем поток для нейронки
+                                 args=[self.get_video_path,
+                                       self.get_lenght_video,
+                                       self.view_json,
+                                       self.second_tk,
+                                       self.update],  # Возвращает путь к видео
+                                 daemon=True)
+        thr.start()
+        #thr.join()
+
+
+    def start_gui(self):#, AI_thread):
         # Yolov5 = yolov5_face.AI_Yolov5()
         # emo_detect = Detector('cpu')
 
         def command_button(lenght_video):
             self.__lenght_video = lenght_video
-            self.browseFiles()
-            AI_thread.start()  # Начинаем обработку видео
+            path = self.browseFiles()
+            asyncio.run(self.thread_yolov())
+            #AI_thread.start()  # Начинаем обработку видео
             #AI_thread.join()
             #self.view_json(json.loads('{"a": 5, "b": 7}'))
 
@@ -100,7 +116,7 @@ class GUI(widjets):
             # self.img = PhotoImage("pie.png")
             # self.panel = Label(self.win, image=self.img)
             self.img = PhotoImage(file= r"C:\Users\nikiy\Desktop\Hackaton\BrainBitsAI\pie.png")
-            self.panel.update() #= Label(self.win, image=self.img)
+            #self.panel.update() #= Label(self.win, image=self.img)
             #panel.pack(side='top')
         except TclError:
             pass
@@ -151,6 +167,7 @@ class GUI(widjets):
                                                      ("all files", "*.*")))
         print(path)
         self.__video_path_private = path
+        return path
 
     def get_main_window(self):
         return self.window

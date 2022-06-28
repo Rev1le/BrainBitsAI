@@ -4,11 +4,13 @@ import re
 import csv
 import json
 yolo5_face = yolov5_face.AI_Yolov5()
+import time
 
 global path
 
 emotions = ("angry","disgust","fear","happy","sad","surprise","neutral")
 
+start_time = time.time()
 
 def get_path_video():
     global path
@@ -59,6 +61,7 @@ for i in list_file():
 #= str(x).replace("'", '"')
 #print(x)
 #x = json.dumps(x)
+print(f"Время анализа заняло {time.time()-start_time}")
 
 f = csv.writer(open("test.csv", "w", newline=''))
 
