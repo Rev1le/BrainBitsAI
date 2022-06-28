@@ -1,5 +1,5 @@
 {
   "path_for_faces" : "лица",
   "path_url_training_video" : "training_video.mp4",
-  "min_face_percent" : 70
+  "min_face_percent" : 50
 }

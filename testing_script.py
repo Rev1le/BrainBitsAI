@@ -10,7 +10,7 @@ global path
 
 emotions = ("angry","disgust","fear","happy","sad","surprise","neutral")
 
-start_time = time.time()
+
 
 def get_path_video():
     global path
@@ -38,6 +38,7 @@ x = list()
 for i in list_file():
     #сделать try
     set_path(i)
+    start_time = time.time()
     regular = r'(([^()]+(([^)]+)[^)])).)'
     emotion_dict = yolo5_face.find_faces_from_video(path = get_path_video, video_length=get_video_lenght)
     max_emotion_num, max_emothion_precent = 0, 0.0

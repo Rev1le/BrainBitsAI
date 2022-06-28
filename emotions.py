@@ -34,7 +34,7 @@ class Detector():
         cudnn.benchmark = True
         self.model.eval()
 
-    def detect_emotion(self, image, func_add_emo_to_list, conf=True):
+    async def detect_emotion(self, image, func_add_emo_to_list, conf=True):
         with torch.no_grad():
             # Normalise and transform images
             normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -44,9 +44,7 @@ class Detector():
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
                 normalize])(image)])
-            #])(Image.fromarray(image)) for image in images]) забрал от греха подальге
             #])(image) for image in images])
-            # Feed through the model
             y = self.model(x.to(self.dev))
             result = []
             for i in range(y.size()[0]):
@@ -68,4 +66,4 @@ class Detector():
                     [f"{emotions[emotion]}{f' ({100 * y[i][emotion].item():.1f}%)' if conf else ''}", emotion])
         print(result)
         func_add_emo_to_list(result)
-        return result
+        #return result

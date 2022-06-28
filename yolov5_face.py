@@ -72,24 +72,11 @@ class AI_Yolov5():
         list_face = self.create_list_image(list_face_coords, image)
 
         if len(list_face) > 0:
-            #self.detector.asinhron_detect_emotion()
-            #result_emotions = self.detector.detect_emotion(list_face, self.add_emotion_to_list, True)
-            #for face in list_face:
-            #    self.detector.asinhron_detect_emotion()
 
-            #try:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             loop.run_until_complete(self.emo_detect_async(list_face, loop))
-            #except:
-            #    pass
 
-
-            #result_emotions = self.detector.asinhron_detect_emotion(list_face, self.add_emotion_to_list, True)
-            #self.emotions_dict_json[frame_time] = result_emotions
-            #print(self.emotions_dict_json)
-            #for emotion in result_emotions:
-            #    self.add_emotion_to_list(emotion)
         return True
 
     async def emo_detect_async(self, list_face, loop):
@@ -102,8 +89,9 @@ class AI_Yolov5():
 
     async def async_func(self,ind_task, face, func_add_emo_to_list):
         print(f'{ind_task}: Запуск ...')
+        start_async = time.time()
         self.detector.detect_emotion(face, func_add_emo_to_list, True)
-        print(f'{ind_task}: Завершено ...')
+        print(f'{ind_task}: Завершено ...', time.time()-start_async)
         return
 
 
