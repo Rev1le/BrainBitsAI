@@ -34,7 +34,7 @@ class Detector():
         cudnn.benchmark = True
         self.model.eval()
 
-    async def detect_emotion(self, image, func_add_emo_to_list, conf=True):
+    def detect_emotion(self, image, func_add_emo_to_list, conf=True):
         with torch.no_grad():
             # Normalise and transform images
             normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],

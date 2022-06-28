@@ -8,6 +8,9 @@ import time
 
 global path
 
+
+start_time = time.time()
+
 emotions = ("angry","disgust","fear","happy","sad","surprise","neutral")
 
 
@@ -28,17 +31,19 @@ list_name_files = []
 def get_video_lenght():
     return 'short'
 
+
+list_path = [r"D:\Project\Python\BrainBitsAI\test set", r"D:\Project\Python\BrainBitsAI\big_face"]
+
 def list_file():
-    for dirname, _, filenames in os.walk(input('Введите путь до папки с файлами')):
-            list_file=[os.path.join(dirname, filename) for filename in filenames]
-    return list_file
+    for path in list_path:
+        for dirname, _, filenames in os.walk(path):
+                list_file=[os.path.join(dirname, filename) for filename in filenames]
+        return list_file
 
 x = list()
-
 for i in list_file():
     #сделать try
     set_path(i)
-    start_time = time.time()
     regular = r'(([^()]+(([^)]+)[^)])).)'
     emotion_dict = yolo5_face.find_faces_from_video(path = get_path_video, video_length=get_video_lenght)
     max_emotion_num, max_emothion_precent = 0, 0.0
