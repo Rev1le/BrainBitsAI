@@ -4,8 +4,10 @@ import re
 import csv
 import json
 yolo5_face = yolov5_face.AI_Yolov5()
-
+import time
 global path
+
+start_time = time.time()
 
 emotions = ("angry","disgust","fear","happy","sad","surprise","neutral")
 
@@ -60,6 +62,7 @@ for i in list_file():
 #print(x)
 #x = json.dumps(x)
 
+print('вывод программы по вермени',time.time()-start_time)
 f = csv.writer(open("test.csv", "w", newline=''))
 
 # Write CSV Header, If you dont need that, remove this line
