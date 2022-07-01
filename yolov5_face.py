@@ -26,7 +26,7 @@ class AI_Yolov5():
         self.emotions_dict_json = {}
 
         self.PATH_PROJECT: str = os.getcwd()
-        self.PATH_FOR_FACES: str = const_data['path_for_faces']
+        #self.PATH_FOR_FACES: str = const_data['path_for_faces']  # Устарело, теперь нет необходимоти сохранять фотки
         self.MIN_FACE_PERCENT: int = const_data['min_face_percent']
         self.SAVING_FRAMES_PER_SECOND: int = const_data['fps_received']
 
@@ -53,16 +53,12 @@ class AI_Yolov5():
         return self.emotions_dict_json
 
     def analysis_image(self, img_array, frame_time):
-        path_frame_tmp: str = f'{self.PATH_PROJECT}\\frame.jpg'
-        #cv2.imwrite(path_frame_tmp, img_array)
         img_nparray_rgb = cv2.cvtColor(img_array.astype(np.uint8), cv2.COLOR_BGR2RGB)
         image = Image.fromarray(img_nparray_rgb).convert('RGB')#Image.open(path_frame_tmp)
         bboxes, confs, points = self.model.predict(img_array)
 
         list_face_coords: list = bboxes[0]
         print(list_face_coords)
-
-        #self.save_faces(list_face_coords, image)
         ###
         # Получаем массив картинок формата Image для каждого полученного фрейма
         ###
@@ -75,26 +71,6 @@ class AI_Yolov5():
             for emotion in result_emotions:
                 self.add_emotion_to_list(emotion)
 
-
-        # threads_list = []
-        # if len(list_face) <= 5 :
-        #      for face in list_face:
-        #          thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-        #          threads_list.append(thread)
-        #          thread.start()
-        # else:
-        #      for ind, face in enumerate(list_face):
-        #          thread = Thread(target=self.detector.detect_emotion, args= ([face],self.add_emotion_to_list, True), daemon=True)
-        #          threads_list.append(thread)
-        #          thread.start()
-        #          if ind == 4 : break
-        #
-        # for thread in threads_list:  # iterates over the threads
-        #     thread.join()
-        #     print(thread.is_alive())
-
-        # for face in list_face:
-        #    face.show()
         return True
 
 
@@ -106,7 +82,8 @@ class AI_Yolov5():
             list_image.append(face_img)
         return list_image
 
-
+    # Устарело из-за ненадобности сохранять лица
+    '''
     def save_faces(self, list_face_coords, image):
         for face_coords in list_face_coords:
             # стандартизация лиц
@@ -117,7 +94,6 @@ class AI_Yolov5():
             self.fasec_image_list.append(cropped_img)
         return True
 
-
     def clean_folder_faces(self):
         file_path_folder = self.PATH_FOR_FACES
         try:
@@ -127,6 +103,7 @@ class AI_Yolov5():
         os.mkdir(file_path_folder)
         #print(file_path_folder.split('\\')[-1])
 
+    '''
 
     def find_faces_from_video(self, path, video_length, view_json_method = None, second_tk =None , update = None):
         print("Видео для обработки", path())

@@ -28,10 +28,13 @@ list_name_files = []
 def get_video_lenght():
     return 'short'
 
+list_path = [r"D:\Project\Python\BrainBitsAI\big_face", r"D:\Project\Python\BrainBitsAI\test set"]
+
 def list_file():
-    for dirname, _, filenames in os.walk(input('Введите путь до папки с файлами')):
+    for path in list_path:
+        for dirname, _, filenames in os.walk(path):
             list_file=[os.path.join(dirname, filename) for filename in filenames]
-    return list_file
+        return list_file
 
 x = list()
 
